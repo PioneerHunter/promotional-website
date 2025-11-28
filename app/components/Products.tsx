@@ -25,7 +25,7 @@ export default function Products({ products }: ProductsProps) {
 
   return (
     <>
-      <section className="bg-gray-50 px-6 py-20">
+      <section className="bg-gradient-to-b from-yellow-50 via-orange-50 to-pink-50 px-6 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
