@@ -2,7 +2,7 @@ services:
   frontend:
     build: .
     restart: always
-    # 将容器内部的 3000 端口映射到宿主机的 3001 端口
+    # 将容器内部的 3000 端口映射到宿主机的 3000 端口
     ports:
-      - "3001:3000"
-    container_name: nextjs_frontend_prod
+      - "3000:3000"
+    container_name: promotional-website
