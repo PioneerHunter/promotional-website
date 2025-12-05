@@ -18,7 +18,7 @@ function verifySignature(
 
   const hmac = crypto.createHmac('sha256', secret);
   const digest = 'sha256=' + hmac.update(payload).digest('hex');
-  
+
   return crypto.timingSafeEqual(
     Buffer.from(signature),
     Buffer.from(digest)
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   try {
     // 获取 Webhook 密钥（从环境变量）
     const webhookSecret = process.env.GITHUB_WEBHOOK_SECRET;
-    
+
     if (!webhookSecret) {
       console.error('GITHUB_WEBHOOK_SECRET 未配置');
       return NextResponse.json(
@@ -40,12 +40,12 @@ export async function POST(request: Request) {
     }
 
     // 获取签名
-    const signature = request.headers.get('x-hub-signature-256') || 
-                     request.headers.get('x-hub-signature') || '';
+    const signature = request.headers.get('x-hub-signature-256') ||
+      request.headers.get('x-hub-signature') || '';
 
     // 读取请求体
     const body = await request.text();
-    
+
     // 验证签名
     if (!verifySignature(body, signature, webhookSecret)) {
       console.error('Webhook 签名验证失败');
@@ -57,17 +57,17 @@ export async function POST(request: Request) {
 
     // 解析 JSON
     const payload = JSON.parse(body);
-    
-    // 只处理 push 事件到 main/master 分支
+
+    // 只处理 push 事件到 master 分支
     const ref = payload.ref || '';
     const branch = ref.replace('refs/heads/', '');
-    
-    if (payload.repository && (branch === 'main' || branch === 'master')) {
+
+    if (payload.repository && branch === 'master') {
       console.log(`收到 push 事件，分支: ${branch}`);
-      
+
       // 异步执行部署脚本（不阻塞响应）
       const deployScript = path.join(process.cwd(), 'scripts', 'deploy.sh');
-      
+
       // 在后台执行部署，捕获输出
       execAsync(`bash ${deployScript}`, {
         cwd: process.cwd(),

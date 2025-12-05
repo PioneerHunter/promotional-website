@@ -2,7 +2,7 @@
 
 ## 概述
 
-本项目支持通过 GitHub Webhook 自动触发 Docker 部署。当代码推送到 `main` 或 `master` 分支时，会自动执行部署脚本。
+本项目支持通过 GitHub Webhook 自动触发 Docker 部署。当代码推送到 `master` 分支时，会自动执行部署脚本。
 
 ## 配置步骤
 
@@ -61,7 +61,7 @@ chmod +x scripts/deploy.sh
 
 ```bash
 # 生成测试 payload
-PAYLOAD='{"ref":"refs/heads/main","repository":{"name":"your-repo"},"head_commit":{"id":"test"}}'
+PAYLOAD='{"ref":"refs/heads/master","repository":{"name":"your-repo"},"head_commit":{"id":"test"}}'
 
 # 生成签名
 SECRET="your_webhook_secret"
@@ -83,7 +83,7 @@ curl -X POST http://localhost:3000/api/webhook/deploy \
 
 ### 6. 验证部署
 
-推送代码到 `main` 分支后：
+推送代码到 `master` 分支后：
 
 1. 检查 Webhook 是否触发（GitHub Webhook 页面）
 2. 检查服务器日志

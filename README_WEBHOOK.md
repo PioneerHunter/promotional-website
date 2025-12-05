@@ -36,7 +36,7 @@ PROJECT_DIR="/app/promotional-website"  # 修改为你的路径
 
 ### 5. 测试
 
-推送代码到 `main` 分支，检查部署是否自动触发。
+推送代码到 `master` 分支，检查部署是否自动触发。
 
 ## 文件说明
 

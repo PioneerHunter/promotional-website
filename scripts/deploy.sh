@@ -28,7 +28,7 @@ cd "$PROJECT_DIR" || exit 1
 # 拉取最新代码
 echo "1. 拉取最新代码..."
 git fetch origin
-git reset --hard origin/main  # 或 origin/master，根据你的分支名
+git reset --hard origin/master
 
 # 停止现有容器
 echo "2. 停止现有容器..."
