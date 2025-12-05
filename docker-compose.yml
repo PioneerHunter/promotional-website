@@ -6,3 +6,8 @@ services:
     ports:
       - "3000:3000"
     container_name: promotional-website
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # GitHub Webhook Secret（从环境变量或 .env 文件读取）
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET:-}

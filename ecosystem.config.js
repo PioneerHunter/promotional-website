@@ -30,7 +30,8 @@ module.exports = {
     exec_mode: 'fork',
     env: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: 3000,
+      GITHUB_WEBHOOK_SECRET: process.env.GITHUB_WEBHOOK_SECRET || ''
     },
     error_file: envConfig.error_file,
     out_file: envConfig.out_file,
