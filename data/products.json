@@ -9,7 +9,8 @@
       "基本护理",
       "博客"
     ],
-    "brand": "THE HOUSEPLANTS PODCAST"
+    "brand": "THE HOUSEPLANTS PODCAST",
+    "showOnHomepage": false
   },
   {
     "id": "2",

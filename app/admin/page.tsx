@@ -14,9 +14,10 @@ import {
   Image,
   Popconfirm,
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import type { Product } from '../types';
 import type { UploadFile, UploadProps } from 'antd';
+import ProductModal from './components/ProductModal';
 
 const { TextArea } = Input;
 
@@ -27,6 +28,7 @@ export default function AdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [uploading, setUploading] = useState(false);
+  const [gitPushing, setGitPushing] = useState(false);
 
   // 获取产品列表
   const fetchProducts = async () => {
@@ -79,6 +81,7 @@ export default function AdminPage() {
     form.setFieldsValue({
       ...product,
       categories: product.categories.join(', '),
+      showOnHomepage: product.showOnHomepage ?? true, // 默认值为 true
     });
     setIsModalOpen(true);
   };
@@ -87,6 +90,7 @@ export default function AdminPage() {
   const handleAdd = () => {
     setEditingProduct(null);
     form.resetFields();
+    form.setFieldsValue({ showOnHomepage: true }); // 默认显示在主页
     setIsModalOpen(true);
   };
 
@@ -129,6 +133,29 @@ export default function AdminPage() {
       onError?.(error as Error);
     } finally {
       setUploading(false);
+    }
+  };
+
+  // Git 推送功能
+  const handleGitPush = async () => {
+    try {
+      setGitPushing(true);
+      const response = await fetch('/api/git/push', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        message.success('代码已成功推送到远程仓库！');
+      } else {
+        message.error(data.error || '推送失败');
+      }
+    } catch (error) {
+      console.error('Git 推送错误:', error);
+      message.error('推送失败，请检查网络连接');
+    } finally {
+      setGitPushing(false);
     }
   };
 
@@ -228,6 +255,17 @@ export default function AdminPage() {
       width: 120,
     },
     {
+      title: '展示在主页',
+      dataIndex: 'showOnHomepage',
+      key: 'showOnHomepage',
+      width: 120,
+      render: (show: boolean | undefined) => (
+        <Tag color={show !== false ? 'green' : 'default'}>
+          {show !== false ? '是' : '否'}
+        </Tag>
+      ),
+    },
+    {
       title: '图片路径',
       dataIndex: 'image',
       key: 'imagePath',
@@ -276,14 +314,31 @@ export default function AdminPage() {
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>产品管理</h1>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            size="large"
-            onClick={handleAdd}
-          >
-            添加产品
-          </Button>
+          <Space>
+            <Popconfirm
+              title="确定要推送代码到远程仓库吗？"
+              onConfirm={handleGitPush}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button
+                type="default"
+                icon={<CloudUploadOutlined />}
+                size="large"
+                loading={gitPushing}
+              >
+                上传
+              </Button>
+            </Popconfirm>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="large"
+              onClick={handleAdd}
+            >
+              添加产品
+            </Button>
+          </Space>
         </div>
 
         <Table
@@ -309,89 +364,13 @@ export default function AdminPage() {
           okText="保存"
           cancelText="取消"
         >
-          <Form
+          <ProductModal
             form={form}
-            layout="vertical"
-            style={{ marginTop: '24px' }}
-          >
-            <Form.Item
-              name="title"
-              label="标题"
-              rules={[{ required: true, message: '请输入标题' }]}
-            >
-              <Input placeholder="请输入产品标题" />
-            </Form.Item>
-
-            <Form.Item
-              name="description"
-              label="描述"
-              rules={[{ required: true, message: '请输入描述' }]}
-            >
-              <TextArea
-                rows={4}
-                placeholder="请输入产品描述"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="image"
-              label="图片"
-              rules={[{ required: true, message: '请上传图片或输入图片路径' }]}
-            >
-              <Space direction="vertical" style={{ width: '100%' }}>
-                <Upload
-                  customRequest={customRequest}
-                  showUploadList={false}
-                  accept="image/*"
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />} loading={uploading}>
-                    上传图片
-                  </Button>
-                </Upload>
-                <Input
-                  placeholder="或输入图片路径（如：/products/product1.jpg）"
-                  onChange={(e) => form.setFieldValue('image', e.target.value)}
-                />
-                {form.getFieldValue('image') && (
-                  <div>
-                    <Image
-                      src={form.getFieldValue('image')}
-                      alt="预览"
-                      width={200}
-                      height={150}
-                      style={{ objectFit: 'cover', marginTop: '8px' }}
-                      fallback="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150'%3E%3Crect width='200' height='150' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999'%3E无图片%3C/text%3E%3C/svg%3E"
-                    />
-                    <p style={{ marginTop: '8px', fontSize: '12px', color: '#999', fontFamily: 'monospace' }}>
-                      图片路径: {form.getFieldValue('image')}
-                    </p>
-                  </div>
-                )}
-              </Space>
-            </Form.Item>
-
-            <Form.Item
-              name="date"
-              label="日期"
-            >
-              <Input placeholder="如：7月 26, 2023" />
-            </Form.Item>
-
-            <Form.Item
-              name="categories"
-              label="分类（用逗号分隔）"
-            >
-              <Input placeholder="基本护理, 博客" />
-            </Form.Item>
-
-            <Form.Item
-              name="brand"
-              label="品牌"
-            >
-              <Input placeholder="请输入品牌名称" />
-            </Form.Item>
-          </Form>
+            editingProduct={editingProduct}
+            uploading={uploading}
+            customRequest={customRequest}
+            onImageChange={(value) => form.setFieldValue('image', value)}
+          />
         </Modal>
       </div>
     </div>

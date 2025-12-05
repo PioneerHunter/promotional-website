@@ -41,7 +41,12 @@ const profileData = {
 
 export default async function Home() {
   // 从 data/products.json 读取产品数据
-  const products = await getProducts();
+  const allProducts = await getProducts();
+
+  // 只显示 showOnHomepage 为 true 的产品（默认值也为 true）
+  const products = allProducts.filter(
+    (product) => product.showOnHomepage !== false
+  );
 
   return (
     <div className="min-h-screen">

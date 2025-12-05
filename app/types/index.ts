@@ -6,6 +6,7 @@ export type Product = {
   date: string;
   categories: string[];
   brand?: string;
+  showOnHomepage?: boolean; // 是否展示在主页
 };
 
 export type SocialLink = {
