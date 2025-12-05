@@ -36,7 +36,7 @@ docker compose down || true
 
 # 构建新镜像
 echo "3. 构建新镜像..."
-docker compose build --no-cache
+docker compose build
 
 # 启动容器
 echo "4. 启动容器..."
