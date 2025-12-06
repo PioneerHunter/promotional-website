@@ -14,7 +14,8 @@ import {
   Image,
   Popconfirm,
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, CloudUploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, CloudUploadOutlined, SearchOutlined, ReloadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import type { Product } from '../types';
 import type { UploadFile, UploadProps } from 'antd';
 import ProductModal from './components/ProductModal';
@@ -27,8 +28,20 @@ export default function AdminPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
   const [uploading, setUploading] = useState(false);
   const [gitPushing, setGitPushing] = useState(false);
+
+  // 搜索条件状态（用于过滤）
+  const [searchFilters, setSearchFilters] = useState<{
+    title: string;
+    description: string;
+    category: string;
+  }>({
+    title: '',
+    description: '',
+    category: '',
+  });
 
   // 获取产品列表
   const fetchProducts = async () => {
@@ -197,6 +210,44 @@ export default function AdminPage() {
     }
   };
 
+  // 处理搜索
+  const handleSearch = (values: { title?: string; description?: string; category?: string }) => {
+    setSearchFilters({
+      title: values.title || '',
+      description: values.description || '',
+      category: values.category || '',
+    });
+  };
+
+  // 处理重置
+  const handleReset = () => {
+    searchForm.resetFields();
+    setSearchFilters({
+      title: '',
+      description: '',
+      category: '',
+    });
+  };
+
+  // 过滤产品列表
+  const filteredProducts = products.filter((product) => {
+    // 标题搜索
+    const matchTitle = !searchFilters.title ||
+      product.title.toLowerCase().includes(searchFilters.title.toLowerCase());
+
+    // 描述搜索
+    const matchDescription = !searchFilters.description ||
+      product.description.toLowerCase().includes(searchFilters.description.toLowerCase());
+
+    // 分类搜索
+    const matchCategory = !searchFilters.category ||
+      product.categories.some((cat) =>
+        cat.toLowerCase().includes(searchFilters.category.toLowerCase())
+      );
+
+    return matchTitle && matchDescription && matchCategory;
+  });
+
   // 表格列定义
   const columns = [
     {
@@ -313,8 +364,34 @@ export default function AdminPage() {
     <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>产品管理</h1>
-          <Space>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Link href="/">
+              <Button
+                icon={<ArrowLeftOutlined />}
+                size="large"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                返回
+              </Button>
+            </Link>
+            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>产品管理</h1>
+          </div>
+          <Space size="middle">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="large"
+              onClick={handleAdd}
+              style={{
+                fontWeight: 500,
+              }}
+            >
+              添加产品
+            </Button>
             <Popconfirm
               title="确定要推送代码到远程仓库吗？"
               onConfirm={handleGitPush}
@@ -326,30 +403,91 @@ export default function AdminPage() {
                 icon={<CloudUploadOutlined />}
                 size="large"
                 loading={gitPushing}
+                style={{
+                  borderColor: '#d9d9d9',
+                }}
               >
                 上传
               </Button>
             </Popconfirm>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              size="large"
-              onClick={handleAdd}
-            >
-              添加产品
-            </Button>
           </Space>
+        </div>
+
+        {/* 搜索表单 */}
+        <div style={{
+          marginBottom: '16px',
+          padding: '16px',
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <Form
+            form={searchForm}
+            layout="inline"
+            onFinish={handleSearch}
+            style={{ width: '100%' }}
+          >
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '16px',
+              width: '100%',
+              marginBottom: '16px'
+            }}>
+              <Form.Item name="title" style={{ margin: 0, width: '100%' }}>
+                <Input
+                  placeholder="按标题搜索"
+                  prefix={<SearchOutlined />}
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item name="description" style={{ margin: 0, width: '100%' }}>
+                <Input
+                  placeholder="按描述搜索"
+                  prefix={<SearchOutlined />}
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item name="category" style={{ margin: 0, width: '100%' }}>
+                <Input
+                  placeholder="按分类搜索"
+                  prefix={<SearchOutlined />}
+                  allowClear
+                />
+              </Form.Item>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', width: '100%' }}>
+              <Button
+                type="primary"
+                icon={<SearchOutlined />}
+                htmlType="submit"
+              >
+                搜索
+              </Button>
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={handleReset}
+              >
+                重置
+              </Button>
+            </div>
+          </Form>
+          {(searchFilters.title || searchFilters.description || searchFilters.category) && (
+            <div style={{ marginTop: '12px', color: '#666', fontSize: '14px' }}>
+              找到 {filteredProducts.length} 个匹配的产品
+            </div>
+          )}
         </div>
 
         <Table
           columns={columns}
-          dataSource={products}
+          dataSource={filteredProducts}
           rowKey="id"
           loading={loading}
           pagination={{
             pageSize: 10,
             showSizeChanger: true,
-            showTotal: (total) => `共 ${total} 条`,
+            showTotal: (total) => `共 ${total} 条${(searchFilters.title || searchFilters.description || searchFilters.category) ? `（已过滤）` : ''}`,
           }}
           scroll={{ x: 1200 }}
         />

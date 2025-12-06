@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "image": "/products/product-1764915494539.webp",
+    "image": "/products/product-1765039582539.png",
     "title": "当冬天来临时",
     "description": "欢迎来到THP,在这里我们一起庆祝室内园艺的奇妙世界，探索植物养护的每一个细节...",
     "date": "7月 26, 2023",
@@ -14,7 +14,7 @@
   },
   {
     "id": "2",
-    "image": "/products/product-1764915511637.webp",
+    "image": "/products/product-1765039590142.png",
     "title": "芳香花园的艺术",
     "description": "欢迎来到一期深情款款的THP节目————失去后的疗愈与重新发现，让我们一起探索...",
     "date": "7月 26, 2023",
@@ -22,11 +22,12 @@
       "历史",
       "博客"
     ],
-    "brand": "THE HOUSEPLANTS PODCAST"
+    "brand": "THE HOUSEPLANTS PODCAST",
+    "showOnHomepage": true
   },
   {
     "id": "3",
-    "image": "/products/product-1764915520993.png",
+    "image": "/products/product-1765039597912.png",
     "title": "更大的花盆能养出更好的植物",
     "description": "欢迎来到THP,您终极的室内园艺资源!在这一集中，我们将深入探讨花盆大小对植物生长的影响...",
     "date": "7月 26, 2023",
@@ -35,7 +36,8 @@
       "花",
       "博客"
     ],
-    "brand": "THE HOUSEPLANTS PODCAST"
+    "brand": "THE HOUSEPLANTS PODCAST",
+    "showOnHomepage": true
   },
   {
     "title": "dsafds",
@@ -43,15 +45,25 @@
     "date": "2025/12/5",
     "categories": [],
     "brand": "",
-    "image": "/products/product-1764908506721.webp",
+    "image": "/products/product-1765039604318.png",
     "imageUrl": "/products/product-1764908506721.webp",
-    "id": "1764908506742"
+    "id": "1764908506742",
+    "showOnHomepage": true
   },
   {
     "title": "e'wqr'we",
     "description": "fsd",
-    "image": "/products/product-1764915136857.webp",
+    "image": "/products/product-1765039610940.png",
     "categories": [],
-    "id": "1764915141048"
+    "id": "1764915141048",
+    "showOnHomepage": true
+  },
+  {
+    "title": "321432",
+    "description": "321432",
+    "image": "/products/product-1764954571714.png",
+    "categories": [],
+    "showOnHomepage": true,
+    "id": "1764954598624"
   }
 ]

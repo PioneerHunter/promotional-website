@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "pm2:dev": "pm2 start ecosystem.config.js",
-    "pm2:prod": "PM2_ENV=production pm2 start ecosystem.config.js"
+    "pm2:prod": "cross-env PM2_ENV=production pm2 start ecosystem.config.js"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
@@ -23,6 +23,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.5",
     "tailwindcss": "^4",

@@ -52,7 +52,7 @@ export default function ProductModal({
         label="图片"
         rules={[{ required: true, message: '请上传图片或输入图片路径' }]}
       >
-        <Space direction="vertical" style={{ width: '100%' }}>
+        <Space orientation="vertical" style={{ width: '100%' }}>
           <Upload
             customRequest={customRequest}
             showUploadList={false}

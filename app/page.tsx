@@ -58,7 +58,7 @@ export default async function Home() {
         bio={profileData.bio}
         socialLinks={profileData.socialLinks}
       />
-      <Products products={products} />
+      <Products products={products} showSearch={false} />
     </div>
   );
 }
